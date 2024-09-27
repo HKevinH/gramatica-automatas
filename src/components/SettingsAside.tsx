@@ -30,17 +30,6 @@ const SettingsAside: React.FC = () => {
     },
   ];
 
-  const filterElements = (
-    elements: HTMLFormControlsCollection,
-    nodeName: string
-  ) => {
-    const inputs = Array.from(elements).filter(
-      (element): element is HTMLInputElement => element.nodeName === nodeName
-    );
-
-    return inputs;
-  };
-
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const { elements } = event.currentTarget;
