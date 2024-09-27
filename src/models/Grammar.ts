@@ -137,6 +137,16 @@ class Grammar {
       Array.from(str).every((char) => this.terminals.has(char))
     );
   }
+
+  //  Función para verificar el tipo de gramática.
+  getGrammar(): SettingsForm {
+    return {
+      terminals: Array.from(this.terminals),
+      noterminals: Array.from(this.nonTerminals),
+      productions: Array.from(this.productionRules as never),
+      typeGrammar: this.typeGrammar,
+    };
+  }
 }
 
 export default Grammar;

@@ -9,7 +9,7 @@ declare global {
   export interface SettingsForm {
     noterminals: string[] | string;
     terminals: string[] | string;
-    productions: string[] | string;
+    productions: string;
     typeGrammar: string | number;
   }
 

@@ -60,21 +60,15 @@ const SettingsAside: React.FC = () => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const { elements } = event.currentTarget;
+    const formData = new FormData(event.currentTarget);
+    const values: SettingsForm = {
+      terminals: formData.get("terminals") as string,
+      noterminals: formData.get("noterminals") as string,
+      productions: formData.get("productions") as string,
+      typeGrammar: formData.get("typeGrammar") as string,
+    };
 
-    const inputs = Array.from(elements).filter(
-      (element): element is HTMLInputElement =>
-        element.nodeName === "INPUT" || element.nodeName === "SELECT"
-    );
-
-    const values: SettingsForm = inputs.reduce((acc, input) => {
-      const { name, value } = input as HTMLInputElement | HTMLSelectElement;
-      return {
-        ...acc,
-        [name]: value,
-      };
-    }, {} as SettingsForm);
-
+    console.log("Configuración recibida:", values);
     callbackSettings(values);
   };
 
