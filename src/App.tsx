@@ -1,13 +1,20 @@
+import { useEffect, useState } from "react";
 import GrammarInput from "./components/GrammarInput";
 import SettingsAside from "./components/SettingsAside";
+import useGrammar from "./hooks/useGrammar";
+import Loader from "./components/Loader";
 
 function App() {
+  const { loader } = useGrammar();
+
+  console.log(loader, "loader");
   return (
     <div className="min-h-screen">
       {/*     Header*/}
+
       <header>adssad</header>
 
-      <div className="flex flex-1">
+      <div className={`flex flex-1 ${loader ? "blur-3xl" : ""}`}>
         {/*   Aside */}
         <SettingsAside />
 

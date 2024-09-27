@@ -1,12 +1,12 @@
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  // onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   type: "text" | "number";
   label: string;
   placeholder: string;
 }
 const Input: React.FC<InputProps> = ({
   type,
-  onChange,
+  //onChange,
   label,
   placeholder,
   ...props
@@ -21,7 +21,7 @@ const Input: React.FC<InputProps> = ({
       </label>
       <input
         {...props}
-        onChange={onChange}
+        //onChange={onChange}
         type={type}
         placeholder={placeholder}
         className="mt-2 w-full p-2 border-2 rounded-md outline-none"
