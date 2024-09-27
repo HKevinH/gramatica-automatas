@@ -14,7 +14,7 @@ function App() {
 
       <header>adssad</header>
 
-      <div className={`flex flex-1 ${loader ? "blur-3xl" : ""}`}>
+      <div className={`flex flex-1 h-screen`}>
         {/*   Aside */}
         <SettingsAside />
 

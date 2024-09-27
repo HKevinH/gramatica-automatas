@@ -12,6 +12,16 @@ declare global {
     productions: string[] | string;
     typeGrammar: string | number;
   }
+
+  export interface Item {
+    title: string;
+    description: string;
+  }
+
+  export interface Section {
+    title: string;
+    items: Item[];
+  }
 }
 
 export {};
