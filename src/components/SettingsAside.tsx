@@ -4,6 +4,7 @@ import React from "react";
 import { Input } from "./Input";
 import useGrammar from "../hooks/useGrammar";
 import Loader from "./Loader";
+import { SelectOptions } from "./Select";
 
 const SettingsAside: React.FC = () => {
   const { callbackSettings, loader } = useGrammar();
@@ -29,25 +30,33 @@ const SettingsAside: React.FC = () => {
     },
   ];
 
+  const filterElements = (
+    elements: HTMLFormControlsCollection,
+    nodeName: string
+  ) => {
+    const inputs = Array.from(elements).filter(
+      (element): element is HTMLInputElement => element.nodeName === nodeName
+    );
+
+    return inputs;
+  };
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const { elements } = event.currentTarget;
 
     const inputs = Array.from(elements).filter(
-      (element): element is HTMLInputElement => element.nodeName === "INPUT"
+      (element): element is HTMLInputElement =>
+        element.nodeName === "INPUT" || element.nodeName === "SELECT"
     );
 
-    const values = inputs.reduce(
-      (acc, input) => {
-        acc[input.role as keyof SettingsForm] = input.value;
-        return acc;
-      },
-      {
-        terminals: "",
-        noterminals: "",
-        productions: "",
-      } as SettingsForm
-    );
+    const values: SettingsForm = inputs.reduce((acc, input) => {
+      const { name, value } = input as HTMLInputElement | HTMLSelectElement;
+      return {
+        ...acc,
+        [name]: value,
+      };
+    }, {} as SettingsForm);
 
     callbackSettings(values);
   };
@@ -58,12 +67,24 @@ const SettingsAside: React.FC = () => {
       <aside className="relative w-auto h-full p-8 border-4 animate-border-gradient rounded-xl">
         <h2 className="text-xl font-bold text-white">Configuraciones</h2>
         <form className="mt-4" onSubmit={handleSubmit}>
+          <div className="mt-4">
+            <SelectOptions
+              label={"Tipo de gramática"}
+              name="typeGrammar"
+              listOptions={[
+                { value: 0, label: "Gramática Regular" },
+                { value: 1, label: "Gramática Libre de Contexto" },
+                { value: 2, label: "Gramática Sensible al Contexto" },
+                { value: 3, label: "Gramática Irrestricta" },
+              ]}
+            />
+          </div>
           {inputs.map((input, index) => (
             <div key={index} className="mt-4">
               <Input
                 type={input.type}
                 label={input.label}
-                role={input.role}
+                name={input.role}
                 placeholder={input.placeholder}
               />
             </div>

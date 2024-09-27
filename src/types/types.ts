@@ -10,6 +10,7 @@ declare global {
     noterminals: string[] | string;
     terminals: string[] | string;
     productions: string[] | string;
+    typeGrammar: string | number;
   }
 }
 
