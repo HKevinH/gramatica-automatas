@@ -1,17 +1,33 @@
 //Hook para manejar el estado y operaciones relacionadas con la gramática (crear, derivar, verificar tipo, etc.).
 import { useEffect, useState } from "react";
-import Grammar, { ProductionRule } from "../models/Grammar";
+import Grammar from "../models/Grammar";
+import Automaton from "../models/Automaton";
 
 const useGrammar = () => {
   const [loader, setLoader] = useState<boolean>(false);
-  const [grammar, setGrammar] = useState<Grammar | null>(null); // Almacenamos la gramática creada
-  const [derivedStrings, setDerivedStrings] = useState<string[]>([]); // Almacenamos las derivaciones
-  const [isRegular, setIsRegular] = useState<boolean>(false); // Estado para indicar si es regular
-  const [isContextFree, setIsContextFree] = useState<boolean>(false); // Estado para indicar si es libre de contexto
+  const [grammar, setGrammar] = useState<Grammar | null>(null);
+  const [derivedStrings, setDerivedStrings] = useState<string[]>([]);
+  const [isRegular, setIsRegular] = useState<boolean>(false);
+  const [isContextFree, setIsContextFree] = useState<boolean>(false);
+  const [automaton, setAutomaton] = useState<Automaton | null>(null);
+  const [automatonDot, setAutomatonDot] = useState<string>("");
 
-  // Función para manejar la configuración inicial de la gramática
+  const validateSettings = (data: SettingsForm) => {
+    const terminalPattern = /^[a-z](,[a-z])*$/.test(data.terminals.trim());
+    const nonTerminalPattern = /^[A-Z](,[A-Z])*$/.test(data.noterminals.trim());
+    const productionPattern =
+      /^([A-Z]->([a-zA-Z]*)(\|([a-zA-Z]*))*)?(;([A-Z]->([a-zA-Z]*)(\|([a-zA-Z]*))*))*$/.test(
+        data.productions.trim()
+      );
+
+    return terminalPattern && nonTerminalPattern && productionPattern;
+  };
+
   const callbackSettings = (data: SettingsForm) => {
-    console.log("Configuración recibida:", data);
+    if (!validateSettings(data)) {
+      console.log("Configuración inválida", data);
+      return;
+    }
     setLoader(true);
 
     // Crear una nueva instancia de la gramática
@@ -29,6 +45,7 @@ const useGrammar = () => {
       const [left, right] = production.split("->");
       if (left && right) {
         const rightSides = right.split("|").map((r) => r.trim().split(""));
+        console.log("Lado derecho:", rightSides);
         const productionRule: ProductionRule = {
           id: index,
           left: left.trim(),
@@ -36,6 +53,11 @@ const useGrammar = () => {
           description: `Regla ${index + 1}: ${left.trim()} -> ${right}`,
         };
         newGrammar.addProductionRule(productionRule);
+        //console.log("Producción añadida:", productionRule);
+      } else {
+        console.error(
+          `Error en la producción en el índice ${index}: ${production}`
+        );
       }
     });
 
@@ -44,9 +66,19 @@ const useGrammar = () => {
     setIsRegular(newGrammar.isRegular());
     setIsContextFree(newGrammar.isContextFree());
 
-    console.log("Gramática creada:", newGrammar);
-    console.log("Es regular:", newGrammar.isRegular());
-    console.log("Es libre de contexto:", newGrammar.isContextFree());
+    if (newGrammar.isRegular()) {
+      const generatedAutomaton = newGrammar.toAutomaton();
+      console.log("Automata generado:", generatedAutomaton);
+      setAutomaton(generatedAutomaton);
+      if (generatedAutomaton) {
+        const dot = generatedAutomaton.toDOT();
+        console.log(dot);
+        setAutomatonDot(dot);
+      }
+    } else {
+      setAutomaton(null);
+      console.log("La gramática no es regular. No se genera un autómata.");
+    }
 
     setLoader(false);
   };
@@ -85,6 +117,8 @@ const useGrammar = () => {
     callbackSettings,
     deriveFromGrammar,
     verifyStringInGrammar,
+    automaton,
+    automatonDot,
   };
 };
 

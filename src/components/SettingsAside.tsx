@@ -5,6 +5,7 @@ import { Input } from "./Input";
 import useGrammar from "../hooks/useGrammar";
 import Loader from "./Loader";
 import { SelectOptions } from "./Select";
+import AutomatonViewer from "./AutomatonViewer";
 
 const SettingsAside: React.FC = () => {
   const { callbackSettings, loader } = useGrammar();
@@ -122,6 +123,8 @@ const SettingsAside: React.FC = () => {
             </button>
           </div>
         </form>
+
+        <AutomatonViewer />
       </aside>
     </>
   );

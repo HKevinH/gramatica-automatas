@@ -1,18 +1,12 @@
 // Clase principal para representar y manipular gramáticas.
 
-interface ProductionRule {
-  //  Interfaz para representar una regla de producción.
-  id: number; // Identificador único de la regla de producción
-  left: string; // No terminal en el lado izquierdo de la producción
-  right: string[]; // Lado derecho de la producción, puede ser una lista de terminales y no terminales
-  description: string; // Descripción de la regla de producción
-}
+import Automaton from "./Automaton";
 
 // Ejemplo de una producción:
 // S -> aA | bB
 // { left: "S", right: [["a", "A"], ["b", "B"]] }
 
-class Grammar {
+class Grammar extends Automaton {
   //  Constructor de la clase.
 
   nonTerminals: Set<string>;
@@ -21,6 +15,7 @@ class Grammar {
   typeGrammar: number; // 0 = Regular, 1 = Libre de Contexto, 2 = Sensible al Contexto, 3 = Irrestricta
 
   constructor() {
+    super();
     //  Inicializa la gramática con un conjunto vacío de no terminales.
     this.nonTerminals = new Set();
     //  Inicializa la gramática con un conjunto vacío de terminales.
@@ -64,16 +59,57 @@ class Grammar {
    */
 
   isRegular(): boolean {
+    //console.log("Verificando si la gramática es regular...");
     for (const rule of this.productionRules) {
-      for (const production of rule.right) {
-        if (
-          production.length > 2 ||
-          (production.length === 2 && !this.nonTerminals.has(production[1]))
-        ) {
-          return false; // Regla no cumple con la forma A -> aB o A -> a
+      // console.log(
+      //   `Verificando la regla: ${rule.left} -> ${rule.right
+      //     .map((r) => r.join(""))
+      //     .join("|")}`
+      // );
+      for (const rightSide of rule.right) {
+        // rightSide es un string[]
+        // Verificar producciones de longitud 1 (A -> a)
+        if (rightSide.length === 1) {
+          const symbol = rightSide[0].trim();
+          // console.log(`Símbolo único: '${symbol}'`);
+          if (!this.terminals.has(symbol)) {
+            // console.log(
+            //   `No es regular: La regla ${rule.left} -> ${rightSide.join(
+            //     ""
+            //   )} no cumple, se esperaba terminal.`
+            // );
+            return false;
+          }
+        }
+        // Verificar producciones de longitud 2 (A -> aB o A -> Ba)
+        else if (rightSide.length === 2) {
+          const [first, second] = rightSide.map((symbol) => symbol.trim());
+          // console.log(`Símbolos: '${first}', '${second}'`);
+          const isRightLinear =
+            this.terminals.has(first) && this.nonTerminals.has(second);
+          const isLeftLinear =
+            this.nonTerminals.has(first) && this.terminals.has(second);
+          if (!isRightLinear && !isLeftLinear) {
+            // console.log(
+            //   `No es regular: La regla ${rule.left} -> ${rightSide.join(
+            //     ""
+            //   )} no cumple, se esperaba una combinación de terminal y no terminal.`
+            // );
+            return false;
+          }
+        }
+        // Producciones de longitud mayor a 2 no son regulares
+        else {
+          // console.log(
+          //   `No es regular: La regla ${rule.left} -> ${rightSide.join(
+          //     ""
+          //   )} tiene longitud inválida.`
+          // );
+          return false;
         }
       }
     }
+    // console.log("La gramática es regular.");
     return true;
   }
 
@@ -138,14 +174,47 @@ class Grammar {
     );
   }
 
-  //  Función para verificar el tipo de gramática.
-  getGrammar(): SettingsForm {
-    return {
-      terminals: Array.from(this.terminals),
-      noterminals: Array.from(this.nonTerminals),
-      productions: Array.from(this.productionRules as never),
-      typeGrammar: this.typeGrammar,
-    };
+  // Nuevo Método: Convertir Gramática Regular a Autómata Finito
+  toAutomaton(): Automaton | null {
+    if (!this.isRegular()) {
+      console.log(
+        "La gramática no es regular. No se puede convertir a un autómata finito."
+      );
+      return null;
+    }
+
+    const automaton = new Automaton();
+
+    // Agregar estados: todos los no terminales + estado de aceptación
+    this.nonTerminals.forEach((nt) => automaton.addState(nt));
+    const acceptState = "ACCEPT";
+    automaton.addState(acceptState);
+
+    // Agregar alfabeto
+    this.terminals.forEach((t) => automaton.addSymbol(t));
+
+    // Definir estado inicial
+    // Asumiremos que el primer no terminal agregado es el inicial
+    const initialState = Array.from(this.nonTerminals)[0];
+    automaton.setStartState(initialState);
+
+    // Agregar transiciones
+    for (const rule of this.productionRules) {
+      for (const rightSide of rule.right) {
+        if (rightSide.length === 1) {
+          const symbol = rightSide[0];
+          automaton.addTransition(rule.left, symbol, acceptState);
+        } else if (rightSide.length === 2) {
+          const [symbol, nextNonTerminal] = rightSide;
+          automaton.addTransition(rule.left, symbol, nextNonTerminal);
+        }
+      }
+    }
+
+    // Agregar estado de aceptación si hay producciones que terminan en terminales
+    // Ya lo hemos manejado agregando transiciones a "ACCEPT"
+
+    return automaton;
   }
 }
 

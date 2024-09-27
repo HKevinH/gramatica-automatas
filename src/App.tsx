@@ -1,13 +1,8 @@
-import { useEffect, useState } from "react";
-import GrammarInput from "./components/GrammarInput";
+import AutomatonViewer from "./components/AutomatonViewer";
 import SettingsAside from "./components/SettingsAside";
 import useGrammar from "./hooks/useGrammar";
-import Loader from "./components/Loader";
 
 function App() {
-  const { loader } = useGrammar();
-
-  console.log(loader, "loader");
   return (
     <div className="min-h-screen">
       {/*     Header*/}

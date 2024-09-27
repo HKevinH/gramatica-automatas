@@ -7,8 +7,8 @@ declare global {
   }
 
   export interface SettingsForm {
-    noterminals: string[] | string;
-    terminals: string[] | string;
+    noterminals: string;
+    terminals: string;
     productions: string;
     typeGrammar: string | number;
   }
@@ -21,6 +21,14 @@ declare global {
   export interface Section {
     title: string;
     items: Item[];
+  }
+
+  export interface ProductionRule {
+    //  Interfaz para representar una regla de producción.
+    id: number; // Identificador único de la regla de producción
+    left: string; // No terminal en el lado izquierdo de la producción
+    right: string[][]; // Lado derecho de la producción, puede ser una lista de terminales y no terminales
+    description: string; // Descripción de la regla de producción
   }
 }
 
