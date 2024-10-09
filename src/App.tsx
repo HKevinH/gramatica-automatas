@@ -1,7 +1,5 @@
 import AutomatonViewer from "./components/AutomatonViewer";
 import SettingsAside from "./components/SettingsAside";
-import useGrammar from "./hooks/useGrammar";
-
 function App() {
   return (
     <div className="min-h-screen">
@@ -15,6 +13,7 @@ function App() {
 
         <main className="w-screen h-screen dark:bg-black">
           {/* <SettingsAside /> */}
+          <AutomatonViewer />
         </main>
       </div>
 

@@ -2,15 +2,15 @@
 import { useEffect, useState } from "react";
 import Grammar from "../models/Grammar";
 import Automaton from "../models/Automaton";
-
+import { useStore } from "../store/store";
 const useGrammar = () => {
   const [loader, setLoader] = useState<boolean>(false);
+  const { setData, clearData } = useStore((state) => state);
   const [grammar, setGrammar] = useState<Grammar | null>(null);
   const [derivedStrings, setDerivedStrings] = useState<string[]>([]);
   const [isRegular, setIsRegular] = useState<boolean>(false);
   const [isContextFree, setIsContextFree] = useState<boolean>(false);
   const [automaton, setAutomaton] = useState<Automaton | null>(null);
-  const [automatonDot, setAutomatonDot] = useState<string>("");
 
   const validateSettings = (data: SettingsForm) => {
     const terminalPattern = /^[a-z](,[a-z])*$/.test(data.terminals.trim());
@@ -24,6 +24,7 @@ const useGrammar = () => {
   };
 
   const callbackSettings = (data: SettingsForm) => {
+    clearData();
     if (!validateSettings(data)) {
       console.log("Configuración inválida", data);
       return;
@@ -45,7 +46,6 @@ const useGrammar = () => {
       const [left, right] = production.split("->");
       if (left && right) {
         const rightSides = right.split("|").map((r) => r.trim().split(""));
-        console.log("Lado derecho:", rightSides);
         const productionRule: ProductionRule = {
           id: index,
           left: left.trim(),
@@ -61,26 +61,25 @@ const useGrammar = () => {
       }
     });
 
+    //Derivar todas las cadenas
     setGrammar(newGrammar);
 
     setIsRegular(newGrammar.isRegular());
     setIsContextFree(newGrammar.isContextFree());
-
     if (newGrammar.isRegular()) {
       const generatedAutomaton = newGrammar.toAutomaton();
-      console.log("Automata generado:", generatedAutomaton);
+      //console.log("Automata generado:", generatedAutomaton);
       setAutomaton(generatedAutomaton);
       if (generatedAutomaton) {
         const dot = generatedAutomaton.toDOT();
-        console.log(dot);
-        setAutomatonDot(dot);
+        setData(dot);
       }
     } else {
       setAutomaton(null);
       console.log("La gramática no es regular. No se genera un autómata.");
     }
 
-    setLoader(false);
+    //console.log(newGrammar.deriveString("B"), "derive");
   };
 
   const deriveFromGrammar = (nonTerminal: string) => {
@@ -104,7 +103,7 @@ const useGrammar = () => {
     if (loader) {
       setTimeout(() => {
         setLoader(false);
-      }, 1000);
+      }, 2000);
     }
   }, [loader]);
 
@@ -118,7 +117,6 @@ const useGrammar = () => {
     deriveFromGrammar,
     verifyStringInGrammar,
     automaton,
-    automatonDot,
   };
 };
 
