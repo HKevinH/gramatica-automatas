@@ -5,3 +5,65 @@
 html {
   background-color: black;
 }
+
+@property --gradient-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+#automaton-gradient {
+  height: 60vh;
+  position: relative;
+}
+
+#automaton-gradient::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-conic-gradient(
+    from var(--gradient-angle),
+    #0f0,
+    #ff0,
+    #0ff,
+    #f0f,
+    #0ff
+  );
+  border-radius: 20px;
+  animation: rotation 4s linear infinite;
+}
+
+#automaton-gradient::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-conic-gradient(
+    from var(--gradient-angle),
+    #0f0,
+    #ff0,
+    #0ff,
+    #f0f,
+    #0ff
+  );
+  border-radius: 20px;
+  animation: rotation 4s linear infinite;
+  filter: blur(40px);
+  opacity: 0.75;
+}
+
+#automaton-gradient span {
+  position: absolute;
+  inset: 4px;
+  background: #222;
+  border-radius: 20px;
+  z-index: 1;
+}
+
+@keyframes rotation {
+  0% {
+    --gradient-angle: 0deg;
+  }
+  100% {
+    --gradient-angle: 360deg;
+  }
+}

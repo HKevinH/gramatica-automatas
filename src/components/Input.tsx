@@ -15,7 +15,7 @@ const Input: React.FC<InputProps> = ({
     <>
       <label
         htmlFor="grammarType"
-        className="block text-sm font-medium text-white"
+        className="block text-sm font-medium text-white font-mono"
       >
         {label}
       </label>
@@ -24,7 +24,7 @@ const Input: React.FC<InputProps> = ({
         //onChange={onChange}
         type={type}
         placeholder={placeholder}
-        className="mt-2 w-full p-2 border-2 rounded-md outline-none"
+        className="mt-2 w-full p-2 border-2 rounded-md outline-none font-mono"
       />
     </>
   );

@@ -19,16 +19,16 @@ const SelectOptions: React.FC<SelectOptionProps> = ({
     <>
       <label
         htmlFor="grammarType"
-        className="block text-sm font-medium text-white"
+        className="block text-sm font-medium text-white font-mono"
       >
         {label}
       </label>
       <select
-        className="w-full p-2 border-2 rounded-md outline-none mt-2"
+        className="w-full p-2 border-2 rounded-md outline-none mt-2 font-mono"
         name={name}
       >
         {listOptions.map((option) => (
-          <option key={option.value} value={option.value}>
+          <option key={option.value} value={option.value} className="font-mono">
             {option.label}
           </option>
         ))}

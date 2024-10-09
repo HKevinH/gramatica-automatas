@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 //Hook para manejar el estado y operaciones relacionadas con la gramática (crear, derivar, verificar tipo, etc.).
 import { useEffect, useState } from "react";
 import Grammar from "../models/Grammar";
@@ -5,7 +6,7 @@ import Automaton from "../models/Automaton";
 import { useStore } from "../store/store";
 const useGrammar = () => {
   const [loader, setLoader] = useState<boolean>(false);
-  const { setData, clearData } = useStore((state) => state);
+  const { setData, clearData, setDeritiveStrings } = useStore((state) => state);
   const [grammar, setGrammar] = useState<Grammar | null>(null);
   const [derivedStrings, setDerivedStrings] = useState<string[]>([]);
   const [isRegular, setIsRegular] = useState<boolean>(false);
@@ -80,6 +81,20 @@ const useGrammar = () => {
     }
 
     //console.log(newGrammar.deriveString("B"), "derive");
+    let derivations: any[] = [];
+
+    newGrammar?.nonTerminals?.forEach((nonTerminal) => {
+      const derivationSteps = newGrammar.deriveString(nonTerminal);
+      //console.log(`Derivaciones para ${nonTerminal}:`, derivationSteps);
+      derivations = derivations.concat(
+        derivationSteps.map((steps) => ({
+          lengthShorts: nonTerminal,
+          derivationSteps: steps,
+        }))
+      );
+    });
+
+    setDeritiveStrings(derivations as []);
   };
 
   const deriveFromGrammar = (nonTerminal: string) => {
@@ -103,7 +118,7 @@ const useGrammar = () => {
     if (loader) {
       setTimeout(() => {
         setLoader(false);
-      }, 2000);
+      }, 1000);
     }
   }, [loader]);
 

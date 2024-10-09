@@ -4,9 +4,22 @@ export default {
   theme: {
     extend: {
       animation: {
-        "border-gradient": "borderGradient 4s linear infinite",
+        "border-gradient": "borderGradient 2s linear infinite",
+        fadeIn: "fadeIn 1s ease-in-out",
       },
       keyframes: {
+        rotation: {
+          "0%": {
+            "--gradient-angle": "0deg",
+          },
+          "100%": {
+            "--gradient-angle": "360deg",
+          },
+        },
+        fadeIn: {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
         borderGradient: {
           "0%": {
             "border-color": "transparent",

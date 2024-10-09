@@ -2,20 +2,16 @@ import AutomatonViewer from "./components/AutomatonViewer";
 import SettingsAside from "./components/SettingsAside";
 function App() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex items-center">
       {/*     Header*/}
 
-      <header>adssad</header>
+      {/*   Aside */}
+      <SettingsAside />
 
-      <div className={`flex flex-1 h-screen`}>
-        {/*   Aside */}
-        <SettingsAside />
-
-        <main className="w-screen h-screen dark:bg-black">
-          {/* <SettingsAside /> */}
-          <AutomatonViewer />
-        </main>
-      </div>
+      <main className="w-[90%] h-auto flex flex-col">
+        {/* <SettingsAside /> */}
+        <AutomatonViewer />
+      </main>
 
       <footer>footer</footer>
     </div>
