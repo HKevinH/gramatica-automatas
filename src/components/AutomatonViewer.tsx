@@ -9,6 +9,7 @@ const AutomatonViewer: React.FC = () => {
   const { data: automatonDot, derivativeStrings } = useStore((state) => state);
   const [error, setError] = useState<string | null>(null);
   const [isRendered, setIsRendered] = useState(false);
+  console.log("derivativeStrings", derivativeStrings[0]);
   useEffect(() => {
     if (containerRef.current && automatonDot) {
       setError(null);
@@ -71,6 +72,17 @@ const AutomatonViewer: React.FC = () => {
                       ))}
                     </tbody>
                   </table>
+                  <p className="text-white font-mono">
+                    * Las cadenas derivadas se muestran en orden de longitud
+                    creciente.
+                  </p>
+                  <p className="text-white font-mono">
+                    Es Regular : {derivativeStrings[0].isregular ? "Sí" : "No"}
+                  </p>
+                  <p className="text-white font-mono">
+                    Es Libre de contexto:{" "}
+                    {derivativeStrings[0].iscontextfree ? "Sí" : "No"}
+                  </p>
                 </div>
                 <div ref={containerRef} className="w-1/2"></div>
               </>

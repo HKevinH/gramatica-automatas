@@ -90,9 +90,13 @@ const useGrammar = () => {
         derivationSteps.map((steps) => ({
           lengthShorts: nonTerminal,
           derivationSteps: steps,
+          isregular: newGrammar.isRegular(),
+          iscontextfree: newGrammar.isContextFree(),
         }))
       );
     });
+
+    console.log("Derivaciones:", newGrammar.isRegular(), derivations);
 
     setDeritiveStrings(derivations as []);
   };
