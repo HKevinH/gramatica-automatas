@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       animation: {
-        "border-gradient": "borderGradient 2s linear infinite",
+        "border-gradient": "borderGradient 1s linear infinite",
         fadeIn: "fadeIn 1s ease-in-out",
       },
       keyframes: {

@@ -7,6 +7,7 @@ import Loader from "./Loader";
 import { SelectOptions } from "./Select";
 
 const SettingsAside: React.FC = () => {
+  const [typeGrammar, setTypeGrammar] = React.useState<number>(0);
   const { callbackSettings, loader } = useGrammar();
 
   const inputs: Inputs[] = [
@@ -69,7 +70,7 @@ const SettingsAside: React.FC = () => {
     };
 
     console.log("Configuración recibida:", values);
-    callbackSettings(values);
+    callbackSettings(values, typeGrammar);
   };
 
   return (
@@ -84,6 +85,7 @@ const SettingsAside: React.FC = () => {
             <SelectOptions
               label={"Tipo de gramática"}
               name="typeGrammar"
+              onChange={(event) => setTypeGrammar(Number(event.target.value))}
               listOptions={[
                 { value: 0, label: "Gramática Regular" },
                 { value: 1, label: "Gramática Libre de Contexto" },

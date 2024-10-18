@@ -24,7 +24,7 @@ const useGrammar = () => {
     return terminalPattern && nonTerminalPattern && productionPattern;
   };
 
-  const callbackSettings = (data: SettingsForm) => {
+  const callbackSettings = (data: SettingsForm, typeGrammar) => {
     clearData();
     if (!validateSettings(data)) {
       console.log("Configuración inválida", data);
@@ -74,6 +74,7 @@ const useGrammar = () => {
       if (generatedAutomaton) {
         const dot = generatedAutomaton.toDOT();
         setData(dot);
+        console.log("Automata generado:", dot);
       }
     } else {
       setAutomaton(null);
@@ -91,7 +92,7 @@ const useGrammar = () => {
           lengthShorts: nonTerminal,
           derivationSteps: steps,
           isregular: newGrammar.isRegular(),
-          iscontextfree: newGrammar.isContextFree(),
+          iscontextfree: typeGrammar === 1 ? newGrammar.isContextFree() : false,
         }))
       );
     });
@@ -104,6 +105,7 @@ const useGrammar = () => {
   const deriveFromGrammar = (nonTerminal: string) => {
     if (grammar) {
       const derivations = grammar.deriveString(nonTerminal);
+      console.log(`Derivaciones para ${nonTerminal}:`, derivations);
       setDerivedStrings(derivations);
     }
   };
