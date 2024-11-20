@@ -42,24 +42,28 @@ export class Tree {
   }
 
   render(containerId: string): void {
-    d3.select(`#${containerId}`).selectAll("*").remove();
+    const container = d3.select(`#${containerId}`);
+    const containerWidth = container.node()?.clientWidth || 500; // Ancho del contenedor
+    const containerHeight = container.node()?.clientHeight || 400; // Alto del contenedor
 
-    const width = 460;
-    const height = 300;
+    // Limpiar el contenedor antes de renderizar
+    container.selectAll("*").remove();
 
-    const treeLayout = d3.tree<TreeNode>().size([width, height - 50]);
+    const treeLayout = d3
+      .tree<TreeNode>()
+      .size([containerWidth - 100, containerHeight - 100]);
     const root = d3.hierarchy(this.root);
 
     treeLayout(root);
 
-    const svg = d3
-      .select(`#${containerId}`)
+    const svg = container
       .append("svg")
-      .attr("width", width)
-      .attr("height", height);
+      .attr("width", "100%")
+      .attr("height", "100%")
+      .attr("viewBox", `0 0 ${containerWidth} ${containerHeight}`)
+      .attr("preserveAspectRatio", "xMidYMid meet");
 
     const g = svg.append("g").attr("transform", "translate(50, 50)");
-
     g.selectAll(".link")
       .data(root.links())
       .enter()
@@ -69,8 +73,10 @@ export class Tree {
       .attr("y1", (d) => d.source.y ?? 0)
       .attr("x2", (d) => d.target.x ?? 0)
       .attr("y2", (d) => d.target.y ?? 0)
-      .style("stroke", "white");
+      .style("stroke", "white")
+      .style("stroke-width", "2px");
 
+    // Renderizar los nodos
     const node = g
       .selectAll(".node")
       .data(root.descendants())
