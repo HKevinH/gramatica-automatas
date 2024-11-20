@@ -1,36 +1,12 @@
 import React, { useRef, useState } from "react";
-import { Tree } from "../models/Tree";
+import { useTree } from "../hooks/useTree";
 
-const ParseTreeViewer: React.FC = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [input, setInput] = useState<string>("(a(b)c)");
-  const [isJson, setIsJson] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const [tree, setTree] = useState<Tree | null>(null);
+interface ParseTreeViewerProps {
+  containerRef: React.RefObject<HTMLDivElement>;
+}
 
-  const handleBuildTree = () => {
-    try {
-      setError(null);
-      let newTree: Tree;
-
-      if (isJson) {
-        const parsedInput = JSON.parse(input);
-        newTree = Tree.fromJSON(parsedInput);
-      } else {
-        newTree = Tree.fromString(input);
-      }
-
-      setTree(newTree);
-
-      if (containerRef.current) {
-        newTree.render("tree-container");
-      }
-    } catch (err) {
-      setError("Error procesando la entrada. Por favor verifica la sintaxis.");
-      console.error("Error al construir el árbol:", err);
-    }
-  };
-
+const ParseTreeViewer: React.FC<ParseTreeViewerProps> = ({ containerRef }) => {
+  const { error, tree } = useTree();
   return (
     <article className="p-5 flex justify-center items-center flex-col">
       <h1 className="text-white text-3xl font-mono">Árbol de Parseo</h1>
@@ -111,33 +87,6 @@ const ParseTreeViewer: React.FC = () => {
             )}
           </span>
         </div>
-      </div>
-      <div className="flex flex-col items-center gap-4 w-full">
-        <textarea
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder={
-            isJson ? "Ingresa un JSON válido" : "Ingresa una cadena (a(b)c)"
-          }
-          rows={4}
-          cols={50}
-          className="border border-gray-300 rounded-md p-2"
-        />
-        <label className="text-white font-mono">
-          <input
-            type="checkbox"
-            checked={isJson}
-            onChange={(e) => setIsJson(e.target.checked)}
-            className="mr-2"
-          />
-          Entrada en formato JSON
-        </label>
-        <button
-          onClick={handleBuildTree}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        >
-          Construir Árbol
-        </button>
       </div>
     </article>
   );

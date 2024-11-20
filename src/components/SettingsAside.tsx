@@ -5,15 +5,22 @@ import { Input } from "./Input";
 import useGrammar from "../hooks/useGrammar";
 import Loader from "./Loader";
 import { SelectOptions } from "./Select";
+import { useTree } from "../hooks/useTree";
 
 interface SettingsAsideProps {
   setTypeAutomaton: React.Dispatch<React.SetStateAction<number>>;
   typeAutomaton: number;
+  setIsJson: React.Dispatch<React.SetStateAction<boolean>>;
+  IsJson: boolean;
+  callbackOnClick: (input: string) => void;
 }
 
 const SettingsAside: React.FC<SettingsAsideProps> = ({
   setTypeAutomaton,
   typeAutomaton,
+  setIsJson,
+  IsJson,
+  callbackOnClick,
 }) => {
   const [typeGrammar, setTypeGrammar] = React.useState<number>(0);
   const { callbackSettings, loader } = useGrammar();
@@ -89,15 +96,20 @@ const SettingsAside: React.FC<SettingsAsideProps> = ({
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    const values: SettingsForm = {
-      terminals: formData.get("terminals") as string,
-      noterminals: formData.get("noterminals") as string,
-      productions: formData.get("productions") as string,
-      typeGrammar: formData.get("typeGrammar") as string,
-    };
+    if (typeAutomaton !== 0) {
+      const values: SettingsForm = {
+        terminals: formData.get("terminals") as string,
+        noterminals: formData.get("noterminals") as string,
+        productions: formData.get("productions") as string,
+        typeGrammar: formData.get("typeGrammar") as string,
+      };
 
-    console.log("Configuración recibida:", values);
-    callbackSettings(values, typeGrammar);
+      console.log("Configuración recibida:", values);
+      callbackSettings(values, typeGrammar);
+    } else {
+      callbackOnClick(formData.get("input") as string);
+    }
+    console.log("Configuración recibida:", formData.get("input"));
   };
 
   return (
@@ -178,6 +190,17 @@ const SettingsAside: React.FC<SettingsAsideProps> = ({
                 />
               </div>
             ))}
+          {typeAutomaton === 0 && (
+            <label className="text-white font-mono">
+              <input
+                type="checkbox"
+                checked={IsJson}
+                onChange={(e) => setIsJson(e.target.checked)}
+                className="mr-2"
+              />
+              Entrada en formato JSON
+            </label>
+          )}
           <div className="divide-y divide-blue-200 bg-white"></div>
 
           {sections.map((section, index) => (

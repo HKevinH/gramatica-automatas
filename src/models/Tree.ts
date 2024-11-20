@@ -69,7 +69,7 @@ export class Tree {
       .attr("y1", (d) => d.source.y ?? 0)
       .attr("x2", (d) => d.target.x ?? 0)
       .attr("y2", (d) => d.target.y ?? 0)
-      .style("stroke", "black");
+      .style("stroke", "white");
 
     const node = g
       .selectAll(".node")
@@ -85,6 +85,7 @@ export class Tree {
       .append("text")
       .attr("dy", -15)
       .attr("text-anchor", "middle")
+      .style("fill", "white")
       .text((d) => d.data.name);
   }
 }
