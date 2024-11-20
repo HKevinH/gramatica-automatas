@@ -17,7 +17,7 @@ const ParseTreeViewer: React.FC<ParseTreeViewerProps> = ({ containerRef }) => {
         }`}
       >
         <div id="automaton-gradient">
-          <span className="flex p-5 flex-row items-center gap-2 justify-between">
+          <span className="flex p-5 flex-row items-center gap-2 justify-between ">
             {tree ? (
               <>
                 <div className="flex-col flex w-1/2 justify-center text-center gap-4">
@@ -55,7 +55,7 @@ const ParseTreeViewer: React.FC<ParseTreeViewerProps> = ({ containerRef }) => {
                 <div
                   ref={containerRef}
                   id="tree-container"
-                  className="w-1/2"
+                  className="w-1/2 flex justify-center items-center"
                 ></div>
               </>
             ) : (

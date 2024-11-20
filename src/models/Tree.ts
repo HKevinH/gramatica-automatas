@@ -44,7 +44,7 @@ export class Tree {
   render(containerId: string): void {
     d3.select(`#${containerId}`).selectAll("*").remove();
 
-    const width = 500;
+    const width = 460;
     const height = 300;
 
     const treeLayout = d3.tree<TreeNode>().size([width, height - 50]);
