@@ -86,6 +86,75 @@ class Automaton {
     dot += "}\n";
     return dot;
   }
+  /**
+   * Detecta ciclos en el autómata utilizando un recorrido DFS.
+   * @returns true si hay ciclos, false en caso contrario.
+   */
+  hasCycles(): boolean {
+    const visited = new Set<string>();
+    const stack = new Set<string>();
+
+    const dfs = (state: string): boolean => {
+      if (stack.has(state)) {
+        return true;
+      }
+      if (visited.has(state)) {
+        return false;
+      }
+
+      visited.add(state);
+      stack.add(state);
+
+      for (const transition of this.transitions) {
+        if (transition.from === state) {
+          if (dfs(transition.to)) {
+            console.log("Ciclo detectado:", state, "->", transition.to);
+            return true;
+          }
+        }
+      }
+
+      stack.delete(state);
+      return false;
+    };
+
+    // Iniciar DFS desde el estado inicial
+    console.log("Buscando ciclos...");
+    return dfs(this.startState);
+  }
+
+  /**
+   * Detecta si un estado de aceptación es alcanzable desde el estado inicial.
+   * @returns Un array con las rutas hacia los estados de aceptación.
+   */
+  findPathsToAcceptStates(): string[][] {
+    const paths: string[][] = [];
+    const visited = new Set<string>();
+
+    const dfs = (state: string, path: string[]) => {
+      if (visited.has(state)) {
+        return;
+      }
+      visited.add(state);
+      path.push(state);
+
+      if (this.acceptStates.has(state)) {
+        paths.push([...path]);
+      } else {
+        for (const transition of this.transitions) {
+          if (transition.from === state) {
+            dfs(transition.to, path);
+          }
+        }
+      }
+
+      path.pop();
+      visited.delete(state);
+    };
+
+    dfs(this.startState, []);
+    return paths;
+  }
 
   /**
    * Escapa identificadores de DOT si contienen caracteres especiales o espacios.

@@ -24,7 +24,7 @@ const useGrammar = () => {
     return terminalPattern && nonTerminalPattern && productionPattern;
   };
 
-  const callbackSettings = (data: SettingsForm, typeGrammar) => {
+  const callbackSettings = (data: SettingsForm, typeGrammar: number) => {
     clearData();
     if (!validateSettings(data)) {
       console.log("Configuración inválida", data);
@@ -75,6 +75,8 @@ const useGrammar = () => {
         const dot = generatedAutomaton.toDOT();
         setData(dot);
         console.log("Automata generado:", dot);
+
+        generatedAutomaton.hasCycles();
       }
     } else {
       setAutomaton(null);

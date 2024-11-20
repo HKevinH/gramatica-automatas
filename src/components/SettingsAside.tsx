@@ -6,7 +6,15 @@ import useGrammar from "../hooks/useGrammar";
 import Loader from "./Loader";
 import { SelectOptions } from "./Select";
 
-const SettingsAside: React.FC = () => {
+interface SettingsAsideProps {
+  setTypeAutomaton: React.Dispatch<React.SetStateAction<number>>;
+  typeAutomaton: number;
+}
+
+const SettingsAside: React.FC<SettingsAsideProps> = ({
+  setTypeAutomaton,
+  typeAutomaton,
+}) => {
   const [typeGrammar, setTypeGrammar] = React.useState<number>(0);
   const { callbackSettings, loader } = useGrammar();
 
@@ -15,6 +23,7 @@ const SettingsAside: React.FC = () => {
       type: "text",
       label: "Terminales",
       placeholder: "Ejemplo: a,b,c",
+      category: 1,
       role: "terminals",
     },
     {
@@ -22,12 +31,21 @@ const SettingsAside: React.FC = () => {
       label: "No terminales",
       placeholder: "Ejemplo: S,A,B",
       role: "noterminals",
+      category: 1,
     },
     {
       type: "text",
       label: "Producciones",
       placeholder: "Ejemplo: S->aA",
       role: "productions",
+      category: 1,
+    },
+    {
+      type: "textarea",
+      label: "Entrada arbol de parseo",
+      placeholder: "Ejemplo: a+a*a",
+      role: "input",
+      category: 0,
     },
   ];
 
@@ -39,22 +57,31 @@ const SettingsAside: React.FC = () => {
           title: "Gramática Regular",
           description:
             "Es una gramática que solo tiene producciones de la forma A -> aB o A -> a, donde A y B son no terminales y a es un terminal.",
+          category: 1,
         },
         {
           title: "Gramática Libre de Contexto",
           description:
             "Es una gramática que solo tiene producciones de la forma A -> α, donde A es un no terminal y α es una cadena de no terminales y terminales.",
+          category: 1,
         },
         // {
         //   title: "Gramática Sensible al Contexto",
         //   description:
         //     "Es una gramática que solo tiene producciones de la forma αAβ -> αγβ, donde A es un no terminal y α, β y γ son cadenas de no terminales y terminales.",
+
         // },
         // {
         //   title: "Gramática Irrestricta",
         //   description:
         //     "Es una gramática que puede tener cualquier tipo de producción.",
         // },
+
+        {
+          title: "Arbol de parseo",
+          category: 0,
+          description: "Muestra el árbol de parseo.",
+        },
       ],
     },
   ];
@@ -81,29 +108,76 @@ const SettingsAside: React.FC = () => {
           Configuraciones
         </h2>
         <form className="mt-4" onSubmit={handleSubmit}>
-          <div className="mt-4">
+          <div>
             <SelectOptions
               label={"Tipo de gramática"}
               name="typeGrammar"
-              onChange={(event) => setTypeGrammar(Number(event.target.value))}
+              onChange={(event) => setTypeAutomaton(Number(event.target.value))}
               listOptions={[
-                { value: 0, label: "Gramática Regular" },
-                { value: 1, label: "Gramática Libre de Contexto" },
-                // { value: 2, label: "Gramática Sensible al Contexto" },
-                // { value: 3, label: "Gramática Irrestricta" },
+                { value: 0, label: "Arbol de parseo" },
+                { value: 1, label: "Automata de pila" },
+                { value: 2, label: "Automata de pila determinista" },
+                { value: 3, label: "Automata de pila no determinista" },
+                { value: 4, label: "Automata de pila con transiciones vacias" },
+                {
+                  value: 5,
+                  label:
+                    "Autom	ata de pila con transiciones vacias determinista",
+                },
+                {
+                  value: 6,
+                  label:
+                    "Automata de pila con transiciones vacias no determinista",
+                },
+                {
+                  value: 7,
+                  label: "Automata de pila con transiciones vacias y epsilon",
+                },
+                {
+                  value: 8,
+                  label:
+                    "Automata de pila con transiciones vacias y epsilon determinista",
+                },
+                {
+                  value: 9,
+                  label:
+                    "Automata de pila con transiciones vacias y epsilon no determinista",
+                },
+                {
+                  value: 10,
+                  label:
+                    "Automata de pila con transiciones vacias y epsilon y transiciones por pila",
+                },
               ]}
             />
           </div>
-          {inputs.map((input, index) => (
-            <div key={index} className="mt-4">
-              <Input
-                type={input.type}
-                label={input.label}
-                name={input.role}
-                placeholder={input.placeholder}
+          {typeAutomaton != 0 && (
+            <div className="mt-4">
+              <SelectOptions
+                label={"Tipo de gramática"}
+                name="typeGrammar"
+                onChange={(event) => setTypeGrammar(Number(event.target.value))}
+                listOptions={[
+                  { value: 0, label: "Gramática Regular" },
+                  { value: 1, label: "Gramática Libre de Contexto" },
+                  // { value: 2, label: "Gramática Sensible al Contexto" },
+                  // { value: 3, label: "Gramática Irrestricta" },
+                ]}
               />
             </div>
-          ))}
+          )}
+          {inputs
+            .filter((inp) => inp.category === typeAutomaton)
+            .map((input, index) => (
+              <div key={index} className="mt-4">
+                <Input
+                  type={input.type}
+                  label={input.label}
+                  name={input.role}
+                  placeholder={input.placeholder}
+                />
+              </div>
+            ))}
           <div className="divide-y divide-blue-200 bg-white"></div>
 
           {sections.map((section, index) => (
@@ -112,14 +186,16 @@ const SettingsAside: React.FC = () => {
                 {section.title}
               </h3>
               <ul className="mt-2">
-                {section.items.map((item, index) => (
-                  <li key={index} className="mt-2">
-                    <h4 className="text-white font-mono">{item.title}</h4>
-                    <p className="text-gray-300 font-mono">
-                      {item.description}
-                    </p>
-                  </li>
-                ))}
+                {section.items
+                  .filter((sec) => sec.category === typeAutomaton)
+                  .map((item, index) => (
+                    <li key={index} className="mt-2">
+                      <h4 className="text-white font-mono">{item.title}</h4>
+                      <p className="text-gray-300 font-mono">
+                        {item.description}
+                      </p>
+                    </li>
+                  ))}
               </ul>
             </div>
           ))}

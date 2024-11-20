@@ -1,9 +1,10 @@
 declare global {
   export interface Inputs {
     label: string;
-    type: "text" | "number";
+    type: "text" | "number" | "textarea";
     placeholder: string;
-    role: "terminals" | "noterminals" | "productions";
+    role: "terminals" | "noterminals" | "productions" | "input";
+    category: number;
   }
 
   export interface SettingsForm {
@@ -16,6 +17,7 @@ declare global {
   export interface Item {
     title: string;
     description: string;
+    category: number;
   }
 
   export interface Section {
